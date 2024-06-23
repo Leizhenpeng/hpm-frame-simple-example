@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sender</title>
+</head>
+
+<body>
+    <h1>Sender Window</h1>
+    <button id="send-message">Send Message</button>
+    <button id="post-msg">Postq</button>
+    <div id="response"></div>
+    <iframe id="receiver-iframe" src="/receiver" style="width:100%; height:400px;"></iframe>
+
+    <script src="https://cdn.jsdelivr.net/npm/window-post-message-proxy@0.2.6/dist/windowPostMessageProxy.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/http-post-message@0.2.3/dist/httpPostMessage.min.js"></script>
+    <script>
+        const hpm = window['http-post-message'];
+        const wpmp = window['window-post-message-proxy'];
+
+
+        // 配置 window-post-message-proxy
+        const windowPostMessageProxy = new wpmp.WindowPostMessageProxy({
+            processTrackingProperties: {
+                addTrackingProperties: hpm.HttpPostMessage.addTrackingProperties,
+                getTrackingProperties: hpm.HttpPostMessage.getTrackingProperties,
+            },
+            isErrorMessage: hpm.HttpPostMessage.isErrorMessage
+        });
+
+        const receiverIframe = document.getElementById('receiver-iframe').contentWindow;
+
+        // 创建 HttpPostMessage 实例
+        const httpPostMessage = new hpm.HttpPostMessage(windowPostMessageProxy, {}, receiverIframe);
+
+        document.getElementById('send-message').addEventListener('click', () => {
+            // 发送 GET 请求
+            httpPostMessage.get('http://example.com/api/data', { data: 'request data' })
+                .then(response => {
+                    document.getElementById('response').innerText = 'Response received: ' + JSON.stringify(response);
+                })
+                .catch(error => {
+                    document.getElementById('response').innerText = 'Error occurred: ' + error;
+                });
+        });
+        // postq
+        document.getElementById('post-msg').addEventListener('click', () => {
+            // 发送 POST 请求
+            httpPostMessage.post('http://example.com/api/data', { data: 'request data' })
+                .then(response => {
+                    document.getElementById('response').innerText = 'Response received: ' + JSON.stringify(response);
+                })
+                .catch(error => {
+                    document.getElementById('response').innerText = 'Error occurred: ' + error;
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Receiver</title>
+</head>
+
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/window-post-message-proxy@0.2.6/dist/windowPostMessageProxy.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/http-post-message@0.2.3/dist/httpPostMessage.min.js"></script>
+    <script>
+        const hpm = window['http-post-message'];
+        const wpmp = window['window-post-message-proxy'];
+
+        console.log('2123', 2123)
+        // 配置 window-post-message-proxy
+        const windowPostMessageProxy = new wpmp.WindowPostMessageProxy({
+            processTrackingProperties: {
+                addTrackingProperties: hpm.HttpPostMessage.addTrackingProperties,
+                getTrackingProperties: hpm.HttpPostMessage.getTrackingProperties,
+            },
+            isErrorMessage: hpm.HttpPostMessage.isErrorMessage
+        });
+
+        // 监听来自其他窗口的消息
+        windowPostMessageProxy.addHandler({
+            // 检查消息是否是目标消息
+            test: (message) => {
+                console.log('Message test:', message);
+                return !!message.headers.data && message.method === 'GET';
+            },
+            // 处理消息
+            handle: (message) => {
+                console.log('Message received:', message);
+                // 模拟处理消息并返回响应
+                const response = { data: 'response get data' };
+                console.log('Response sent:', response);
+                return response;
+            }
+        });
+
+        // 创建 HttpPostMessage 实例
+        windowPostMessageProxy.addHandler({
+            // 检查消息是否是目标消息
+            test: (message) => {
+                console.log('Message test:', message);
+                return message.body && message.method === 'POST';
+            },
+            // 处理消息
+            handle: (message) => {
+                console.log('Message received:', message);
+                // 模拟处理消息并返回响应
+                const response = { data: 'response post data' };
+                return response;
+            }
+        });
+    </script>
+    《接收方2》
+</body>
+
+</html>
