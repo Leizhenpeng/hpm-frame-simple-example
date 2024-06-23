@@ -13,7 +13,6 @@
         const hpm = window['http-post-message'];
         const wpmp = window['window-post-message-proxy'];
 
-        console.log('2123', 2123)
         // 配置 window-post-message-proxy
         const windowPostMessageProxy = new wpmp.WindowPostMessageProxy({
             processTrackingProperties: {
@@ -33,7 +32,6 @@
             // 处理消息
             handle: (message) => {
                 console.log('Message received:', message);
-                // 模拟处理消息并返回响应
                 const response = { data: 'response get data' };
                 console.log('Response sent:', response);
                 return response;
@@ -50,13 +48,12 @@
             // 处理消息
             handle: (message) => {
                 console.log('Message received:', message);
-                // 模拟处理消息并返回响应
                 const response = { data: 'response post data' };
                 return response;
             }
         });
     </script>
-    《接收方2》
+    接收方....
 </body>
 
 </html>
